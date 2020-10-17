@@ -1,0 +1,178 @@
+---
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: "Nova Nomination API"
+basePath: "/"
+schemes:
+  - "https"
+paths:
+  /members/{memberId}/nominations:
+    post:
+      description: "Receives a new candidate nomination from an existing Nova member"
+      operationId: "membersMemberIdNominationsPOST"
+      consumes:
+        - "application/json"
+      parameters:
+        - name: "memberId"
+          in: "path"
+          description: "The id of the existing nova member that is doing the nomination"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "data"
+          description: "Body of the nomination"
+          required: false
+          schema:
+            $ref: "#/definitions/data"
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/apiResult"
+        "409":
+          description: "Nomination already exists"
+          schema:
+            $ref: "#/definitions/apiResult"
+        default:
+          description: "Some transient error ocurred"
+          schema:
+            $ref: "#/definitions/apiResult"
+      x-swagger-router-controller: "Default"
+  /nominations:
+    get:
+      description: "Returns all the non-rejected nominations for the admins to see"
+      operationId: "nominationsGET"
+      parameters: []
+      responses:
+        "201":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/inline_response_201"
+        default:
+          description: "Some transient error ocurred"
+          schema:
+            $ref: "#/definitions/apiResult"
+      x-swagger-router-controller: "Default"
+definitions:
+  apiResult:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        example: "Request message response"
+        description: "The response message in a human format"
+    example:
+      message: "Request message response"
+  membersmemberIdnominations_score:
+    type: "object"
+    properties:
+      involvement:
+        type: "integer"
+        example: 8
+        description: "Evaluation from 0 to 10 of the candidate's involvement"
+        minimum: 0
+        maximum: 10
+      talent:
+        type: "integer"
+        example: 10
+        description: "Evaluation from 0 to 10 of the candidate's talent"
+        minimum: 0
+        maximum: 10
+    description: "The object that holds the scores of the candidate"
+    example:
+      involvement: 8
+      talent: 10
+  data:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        format: "email"
+        example: "newcandidate@gmail.com"
+        description: "The email of the candidate to be nominated"
+      description:
+        type: "string"
+        example:
+          "new candidate would be an awesome adition to Nova due to its outstanding\
+          \ experience and good humour"
+        description: "The description of the candidate"
+      score:
+        $ref: "#/definitions/membersmemberIdnominations_score"
+  inline_response_201_data:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        example: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+        description: "the id of the nomination"
+      email:
+        type: "string"
+        format: "email"
+        example: "newcandidate@gmail.com"
+        description: "The email of the nominated candidate"
+      description:
+        type: "string"
+        format: "email"
+        example: "newcandidate@gmail.com"
+        description: "The description of the nominated candidate"
+      score:
+        $ref: "#/definitions/membersmemberIdnominations_score"
+      referrer:
+        type: "string"
+        format: "uuid"
+        example: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+        description: "the id of the referring member"
+      dateReferred:
+        type: "string"
+        format: "date"
+        example: "2020-08-20T08:40:58.200Z"
+        description: "the date when the nomination was made"
+      status:
+        type: "string"
+        enum:
+          - "PENDING"
+          - "REJECTED"
+    example:
+      score:
+        involvement: 8
+        talent: 10
+      referrer: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+      dateReferred: "2020-08-20T08:40:58.200Z"
+      description: "newcandidate@gmail.com"
+      id: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+      email: "newcandidate@gmail.com"
+      status: "PENDING"
+  inline_response_201:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        example: "Request message response"
+        description: "The response message in a human format"
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/inline_response_201_data"
+    example:
+      data:
+        - score:
+            involvement: 8
+            talent: 10
+          referrer: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+          dateReferred: "2020-08-20T08:40:58.200Z"
+          description: "newcandidate@gmail.com"
+          id: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+          email: "newcandidate@gmail.com"
+          status: "PENDING"
+        - score:
+            involvement: 8
+            talent: 10
+          referrer: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+          dateReferred: "2020-08-20T08:40:58.200Z"
+          description: "newcandidate@gmail.com"
+          id: "8c8ff55c-11f5-4b3c-8596-3d9831a8934d"
+          email: "newcandidate@gmail.com"
+          status: "PENDING"
+      message: "Request message response"
